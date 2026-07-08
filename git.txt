@@ -1,1 +1,5 @@
-Join Channel for any kind of help.
+{
+  "title": "ANSHIFY TOOLS PRO",
+  "message": "Join our Instagram channel to get all premium tools updates for free!",
+  "link": "https://www.instagram.com/channel/AbaxyVLam6mJ9ii5/"
+}

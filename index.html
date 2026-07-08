@@ -141,6 +141,285 @@
             font-weight: 600;
             cursor: pointer;
             width: 100%;
+            margin-top: 24px;      /* Button ko thoda upar lane ke liye spacing */
+            margin-bottom: 20px;   /* Bottom se clear distance */
+        }
+
+        .image-preview-container {
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .ratio-1-1 { aspect-ratio: 1 / 1; }
+        .ratio-4-5 { aspect-ratio: 4 / 5; }
+        .ratio-9-16 { aspect-ratio: 9 / 16; }
+
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0 { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .download-info-text {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            margin: 12px 0;
+            display: none; /* Default me hidden rahega */
+        }
+
+        .action-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--text);
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    
+    <div id="createScreen" class="screen active">
+        <div class="header">
+            <h1>Artsholio</h1>
+            <div style="background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Pro</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Enter Prompt</div>
+            <textarea id="promptInput" placeholder="A stunning photorealistic portrait..."></textarea>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Aspect Ratio</div>
+            <div class="ratio-grid">
+                <div class="ratio-btn active" onclick="setRatio('1:1', 'ratio-1-1', this)">1:1</div>
+                <div class="ratio-btn" onclick="setRatio('4:5', 'ratio-4-5', this)">4:5</div>
+                <div class="ratio-btn" onclick="setRatio('9:16', 'ratio-9-16', this)">9:16</div>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="generateArt()">Generate</button>
+    </div>
+
+    <div id="resultScreen" class="screen">
+        <div class="header">
+            <div class="back-btn" onclick="goBack()">&larr;</div>
+            <h1>Result</h1>
+            <div style="width:36px;"></div>
+        </div>
+
+        <div id="previewBox" class="image-preview-container ratio-1-1">
+            <div class="loader" id="loader"></div>
+            <img id="outputImage" alt="AI Generated Output">
+        </div>
+
+        <div id="downloadInfo" class="download-info-text">
+            press and hold on image to Download
+        </div>
+
+        <div class="card" style="background:#f8fafc; margin-bottom: 20px;">
+            <p id="promptDisplay" style="margin:0; font-size:14px;"></p>
+        </div>
+
+        <div class="action-row">
+            <button class="action-btn" onclick="goBack()">
+                <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+            </button>
+            <button class="action-btn" onclick="alert('Liked!')">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+            <button class="action-btn" onclick="downloadImage()">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"></path></svg>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let selectedRatioClass = 'ratio-1-1';
+    let currentImgUrl = '';
+
+    function setRatio(ratioText, cssClass, element) {
+        document.querySelectorAll('.ratio-btn').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+        selectedRatioClass = cssClass;
+    }
+
+    function generateArt() {
+        const rawPrompt = document.getElementById("promptInput").value.trim();
+        if (!rawPrompt) return alert("Kuch toh prompt likho bhai!");
+
+        document.getElementById("createScreen").classList.remove("active");
+        document.getElementById("resultScreen").classList.add("active");
+
+        const loader = document.getElementById("loader");
+        const outputImage = document.getElementById("outputImage");
+        const downloadInfo = document.getElementById("downloadInfo");
+        
+        document.getElementById("previewBox").className = "image-preview-container " + selectedRatioClass;
+        document.getElementById("promptDisplay").innerText = rawPrompt;
+
+        loader.style.display = "block";
+        outputImage.style.display = "none";
+        downloadInfo.style.display = "none"; // Nayi image generation shuru hote hi text hide hoga
+
+        const uniqueSeed = Math.floor(Math.random() * 99999999);
+        const cleanPrompt = encodeURIComponent(rawPrompt);
+        
+        let w = 1024; let h = 1024;
+        if (selectedRatioClass === 'ratio-9-16') { w = 720; h = 1280; }
+        else if (selectedRatioClass === 'ratio-4-5') { w = 800; h = 1000; }
+
+        currentImgUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=${w}&height=${h}&seed=${uniqueSeed}&model=flux&enhance=true`;
+
+        outputImage.src = currentImgUrl;
+        
+        outputImage.onload = () => {
+            outputImage.style.display = "block";
+            loader.style.display = "none";
+            downloadInfo.style.display = "block"; // Image load hone par text dikhega
+        };
+        outputImage.onerror = () => {
+            alert("Image generate nahi ho payi, kripya dobara koshish karein.");
+            loader.style.display = "none";
+            downloadInfo.style.display = "none";
+        };
+    }
+
+    function downloadImage() {
+        if(currentImgUrl) window.open(currentImgUrl, '_blank');
+    }
+
+    function goBack() {
+        document.getElementById("resultScreen").classList.remove("active");
+        document.getElementById("createScreen").classList.add("active");
+    }
+</script>
+
+</body>
+</html>
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: none;
+            resize: none;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .ratio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .ratio-btn {
+            background: var(--bg);
+            border: 1px solid transparent;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .ratio-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
             margin-top: auto;
         }
 

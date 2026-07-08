@@ -13,6 +13,8 @@
             --text: #0f172a;
             --text-muted: #64748b;
             --border: #f1f5f9;
+            --accent-light: #f0fdf4;
+            --accent-text: #16a34a;
         }
 
         body {
@@ -47,7 +49,7 @@
 
         .screen {
             display: none;
-            padding: 20px;
+            padding: 24px;
             flex-direction: column;
             flex-grow: 1;
         }
@@ -60,49 +62,60 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .header h1 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             margin: 0;
+            letter-spacing: -0.5px;
         }
 
         .back-btn {
             background: var(--card);
             border: 1px solid var(--border);
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
         }
 
         .card {
             background: var(--card);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0,0,0,0.01);
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            color: var(--text-muted);
         }
 
         textarea {
             width: 100%;
-            height: 80px;
+            height: 90px;
             border: none;
             resize: none;
-            font-size: 14px;
+            font-size: 15px;
+            line-height: 1.5;
             color: var(--text);
             outline: none;
             padding: 0;
@@ -112,49 +125,59 @@
         .ratio-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
 
         .ratio-btn {
             background: var(--bg);
             border: 1px solid transparent;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
+            padding: 12px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
             text-align: center;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
         }
 
         .ratio-btn.active {
             background: var(--primary);
             color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 14px;
+            padding: 16px;
+            border-radius: 16px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-top: 24px;      /* Button ko thoda upar lane ke liye spacing */
-            margin-bottom: 20px;   /* Bottom se clear distance */
+            margin-top: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
         }
 
         .image-preview-container {
             width: 100%;
             background: #e2e8f0;
-            border-radius: 16px;
+            border-radius: 24px;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
         }
 
         .ratio-1-1 { aspect-ratio: 1 / 1; }
@@ -166,53 +189,71 @@
             height: 100%;
             object-fit: cover;
             display: none;
+            -webkit-touch-callout: default; /* Enforce long press download */
         }
 
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             animation: spin 1s linear infinite;
             display: none;
         }
 
         @keyframes spin {
-            0 { transform: rotate(0deg); }
+            0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .download-info-text {
+        .download-info-pill {
+            background: var(--accent-light);
+            color: var(--accent-text);
             text-align: center;
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 500;
-            margin: 12px 0;
-            display: none; /* Default me hidden rahega */
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(22, 163, 74, 0.1);
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .action-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr); /* 2 items left after removing download */
+            gap: 14px;
             margin-top: auto;
         }
 
         .action-btn {
             background: white;
             border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background: var(--border);
         }
 
         .action-btn svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             fill: none;
             stroke: var(--text);
             stroke-width: 2;
@@ -226,7 +267,7 @@
     <div id="createScreen" class="screen active">
         <div class="header">
             <h1>Artsholio</h1>
-            <div style="background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Pro</div>
+            <div style="background: var(--primary-light); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">PRO</div>
         </div>
 
         <div class="card">
@@ -243,14 +284,13 @@
             </div>
         </div>
 
-        <button class="btn-primary" onclick="generateArt()">Generate</button>
+        <button class="btn-primary" onclick="generateArt()">Generate Art</button>
     </div>
 
     <div id="resultScreen" class="screen">
         <div class="header">
             <div class="back-btn" onclick="goBack()">&larr;</div>
-            <h1>Result</h1>
-            <div style="width:36px;"></div>
+            <h1 style="flex-grow:1; text-align:center; margin-right:40px;">Result</h1>
         </div>
 
         <div id="previewBox" class="image-preview-container ratio-1-1">
@@ -258,23 +298,21 @@
             <img id="outputImage" alt="AI Generated Output">
         </div>
 
-        <div id="downloadInfo" class="download-info-text">
-            press and hold on image to Download
+        <div id="downloadInfo" class="download-info-pill">
+            💡 Press and hold on image to Download
         </div>
 
-        <div class="card" style="background:#f8fafc; margin-bottom: 20px;">
-            <p id="promptDisplay" style="margin:0; font-size:14px;"></p>
+        <div class="card" style="background:#f8fafc; margin-bottom: 16px;">
+            <div class="card-title" style="margin-bottom: 6px;">Your Prompt</div>
+            <p id="promptDisplay" style="margin:0; font-size:14px; color: var(--text); line-height: 1.4;"></p>
         </div>
 
         <div class="action-row">
-            <button class="action-btn" onclick="goBack()">
+            <button class="action-btn" onclick="goBack()" title="Go Back">
                 <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
             </button>
-            <button class="action-btn" onclick="alert('Liked!')">
+            <button class="action-btn" onclick="alert('Added to Favorites!')" title="Like">
                 <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            </button>
-            <button class="action-btn" onclick="downloadImage()">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"></path></svg>
             </button>
         </div>
     </div>
@@ -307,7 +345,7 @@
 
         loader.style.display = "block";
         outputImage.style.display = "none";
-        downloadInfo.style.display = "none"; // Nayi image generation shuru hote hi text hide hoga
+        downloadInfo.style.display = "none"; 
 
         const uniqueSeed = Math.floor(Math.random() * 99999999);
         const cleanPrompt = encodeURIComponent(rawPrompt);
@@ -323,17 +361,14 @@
         outputImage.onload = () => {
             outputImage.style.display = "block";
             loader.style.display = "none";
-            downloadInfo.style.display = "block"; // Image load hone par text dikhega
+            downloadInfo.style.display = "block"; // Image successful load hone par hi banner show hoga
         };
         outputImage.onerror = () => {
             alert("Image generate nahi ho payi, kripya dobara koshish karein.");
             loader.style.display = "none";
             downloadInfo.style.display = "none";
+            goBack();
         };
-    }
-
-    function downloadImage() {
-        if(currentImgUrl) window.open(currentImgUrl, '_blank');
     }
 
     function goBack() {

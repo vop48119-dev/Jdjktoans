@@ -1,5 +1,5 @@
 {
-  "title": "ANSHIFY TOOLS PRO",
-  "message": "Join our Instagram channel to get all premium tools free!",
+  "title": "Anshify Tools",
+  "message": "Welcome To Anshify Tools inc\nFollow Insta Account & Join Channel\nfor more free tools.",
   "link": "https://www.instagram.com/channel/AbaxyVLam6mJ9ii5/"
 }
